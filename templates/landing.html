@@ -4,17 +4,20 @@
 
 {% block content %}
 
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-badge">Personal Finance Tracker</div>
+        <div class="hero-badge">v1.0 Now Live</div>
         <h1 class="hero-title">
-            Know where your<br>
-            <em>money goes</em>
+            Track every rupee.<br>
+            <em>Own your future.</em>
         </h1>
         <p class="hero-subtitle">
-            Log expenses, understand your spending patterns,
-            and take control of your financial life —
-            one transaction at a time.
+            The intuitive expense tracker that helps you see exactly
+            where your money goes and how to save more every month.
         </p>
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
@@ -24,38 +27,34 @@
     <div class="hero-visual">
         <div class="mock-card">
             <div class="mock-card-header">
-                <span class="mock-label">March 2026</span>
-                <span class="mock-total">₹12,450</span>
+                <span class="mock-label">August 2026</span>
+                <span class="mock-total">₹24,500</span>
             </div>
             <div class="mock-bars">
                 <div class="mock-bar-row">
-                    <span class="mock-cat">Bills</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 72%"></div>
-                    </div>
-                    <span class="mock-amt">₹4,500</span>
-                </div>
-                <div class="mock-bar-row">
                     <span class="mock-cat">Food</span>
                     <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 52%"></div>
+                        <div class="mock-bar" style="width: 60%"></div>
                     </div>
-                    <span class="mock-amt">₹3,200</span>
-                </div>
-                <div class="mock-bar-row">
-                    <span class="mock-cat">Health</span>
-                    <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 33%"></div>
-                    </div>
-                    <span class="mock-amt">₹2,050</span>
+                    <span class="mock-amt">₹8,200</span>
                 </div>
                 <div class="mock-bar-row">
                     <span class="mock-cat">Transport</span>
                     <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-4" style="width: 28%"></div>
+                        <div class="mock-bar mock-bar-2" style="width: 30%"></div>
                     </div>
-                    <span class="mock-amt">₹1,800</span>
+                    <span class="mock-amt">₹3,100</span>
                 </div>
+                <div class="mock-bar-row">
+                    <span class="mock-cat">Other</span>
+                    <div class="mock-bar-track">
+                        <div class="mock-bar mock-bar-3" style="width: 10%"></div>
+                    </div>
+                    <span class="mock-amt">₹3,200</span>
+                </div>
+            </div>
+            <div class="mock-card-footer">
+                <span class="mock-btn">View Detailed Analysis →</span>
             </div>
         </div>
     </div>

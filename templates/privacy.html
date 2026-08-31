@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Policy — Spendly{% endblock %}
+
+{% block content %}
+<div class="terms-container">
+    <h1>Privacy Policy</h1>
+    <p>Last updated: August 31, 2026</p>
+
+    <section>
+        <h2>1. Data We Collect</h2>
+        <p>We collect information that you provide directly to us when you create an account and log your expenses. This includes your email address, password, and the financial data you choose to track (amounts, categories, and descriptions).</p>
+    </section>
+
+    <section>
+        <h2>2. How We Use Your Data</h2>
+        <p>Your data is used solely to provide the expense tracking service. We use it to generate your spending reports, provide category breakdowns, and maintain your account. We do not sell or trade your personal information to outside parties.</p>
+    </section>
+
+    <section>
+        <h2>3. Data Storage</h2>
+        <p>We implement industry-standard security measures to protect your data. Your information is stored securely, and we take reasonable precautions to prevent unauthorized access, loss, or misuse of your financial records.</p>
+    </section>
+
+    <section>
+        <h2>4. Third Party Services</h2>
+        <p>We do not share your data with third-party advertisers. We may use trusted third-party service providers for hosting and infrastructure, but they are strictly prohibited from using your data for any purpose other than providing these technical services.</p>
+    </section>
+
+    <section>
+        <h2>5. Contact Us</h2>
+        <p>If you have any questions about this Privacy Policy or how your data is handled, please contact us at privacy@spendly.example.com.</p>
+    </section>
+</div>
+
+<style>
+    .terms-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 20px;
+        line-height: 1.6;
+        color: var(--ink-soft);
+    }
+    .terms-container h1 {
+        margin-bottom: 10px;
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+    }
+    .terms-container h2 {
+        margin-top: 30px;
+        margin-bottom: 10px;
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+    }
+    .terms-container p {
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}

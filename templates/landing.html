@@ -6,6 +6,56 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-container {
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+        aspect-ratio: 16 / 9;
+        background: #000;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+
+    .modal-close {
+        position: absolute;
+        top: -40px;
+        right: 0;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2rem;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .video-wrapper {
+        width: 100%;
+        height: 100%;
+    }
+
+    .video-wrapper iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+</style>
 {% endblock %}
 
 <section class="hero">
@@ -21,7 +71,7 @@
         </p>
         <div class="hero-actions">
             <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
-            <a href="{{ url_for('login') }}" class="btn-primary">See how it works</a>
+            <a href="#" id="open-video-modal" class="btn-primary">See how it works</a>
         </div>
     </div>
     <div class="hero-visual">
@@ -99,5 +149,46 @@
         <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
     </div>
 </section>
+
+<div id="video-modal" class="modal-overlay">
+    <div class="modal-container">
+        <button id="close-video-modal" class="modal-close">&times;</button>
+        <div class="video-wrapper">
+            <iframe id="modal-iframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const modal = document.getElementById('video-modal');
+        const openBtn = document.getElementById('open-video-modal');
+        const closeBtn = document.getElementById('close-video-modal');
+        const iframe = document.getElementById('modal-iframe');
+        const videoUrl = "https://www.youtube.com/embed/dQw4w9WgXcQ"; // Placeholder
+
+        function openModal(e) {
+            e.preventDefault();
+            iframe.src = videoUrl + "?autoplay=1";
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            iframe.src = ""; // Stop video by clearing src
+            document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    })();
+</script>
 
 {% endblock %}

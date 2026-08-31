@@ -10,51 +10,63 @@
 
 <section class="hero">
     <div class="hero-inner">
-        <div class="hero-badge">v1.0 Now Live</div>
+        <div class="hero-badge"><span class="badge-dot"></span> Free to use · No credit card needed</div>
         <h1 class="hero-title">
             Track every rupee.<br>
-            <em>Own your future.</em>
+            <span class="text-accent">Know where it goes.</span>
         </h1>
         <p class="hero-subtitle">
-            The intuitive expense tracker that helps you see exactly
-            where your money goes and how to save more every month.
+            Spendly helps you log expenses, spot patterns, and stay
+            on budget — without the spreadsheet headache.
         </p>
         <div class="hero-actions">
-            <a href="{{ url_for('register') }}" class="btn-primary">Start tracking free</a>
-            <a href="{{ url_for('login') }}" class="btn-ghost">Sign in</a>
+            <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
+            <a href="{{ url_for('login') }}" class="btn-primary">See how it works</a>
         </div>
     </div>
     <div class="hero-visual">
         <div class="mock-card">
-            <div class="mock-card-header">
-                <span class="mock-label">August 2026</span>
-                <span class="mock-total">₹24,500</span>
+            <div class="card-window-header">
+                <span class="dot red"></span>
+                <span class="dot yellow"></span>
+                <span class="dot green"></span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">This month</span>
+                    <span class="stat-value">₹18,240</span>
+                    <span class="stat-trend positive">+12% vs last</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Budget left</span>
+                    <span class="stat-value">₹6,760</span>
+                    <span class="stat-trend positive">43% remaining</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Transactions</span>
+                    <span class="stat-value">34</span>
+                    <span class="stat-trend">this month</span>
+                </div>
             </div>
             <div class="mock-bars">
                 <div class="mock-bar-row">
                     <span class="mock-cat">Food</span>
                     <div class="mock-bar-track">
-                        <div class="mock-bar" style="width: 60%"></div>
+                        <div class="mock-bar bar-yellow" style="width: 70%"></div>
                     </div>
-                    <span class="mock-amt">₹8,200</span>
                 </div>
                 <div class="mock-bar-row">
-                    <span class="mock-cat">Transport</span>
+                    <span class="mock-cat">Travel</span>
                     <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-2" style="width: 30%"></div>
+                        <div class="mock-bar bar-blue" style="width: 45%"></div>
                     </div>
-                    <span class="mock-amt">₹3,100</span>
                 </div>
                 <div class="mock-bar-row">
-                    <span class="mock-cat">Other</span>
+                    <span class="mock-cat">Bills</span>
                     <div class="mock-bar-track">
-                        <div class="mock-bar mock-bar-3" style="width: 10%"></div>
+                        <div class="mock-bar bar-purple" style="width: 35%"></div>
                     </div>
-                    <span class="mock-amt">₹3,200</span>
                 </div>
-            </div>
-            <div class="mock-card-footer">
-                <span class="mock-btn">View Detailed Analysis →</span>
             </div>
         </div>
     </div>

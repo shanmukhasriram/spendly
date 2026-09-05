@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import create_user, get_user_by_email
+from database.db import create_user, get_user_by_email, init_db, seed_db
 
 from functools import wraps
 
@@ -52,7 +52,7 @@ def login():
         password = request.form.get("password")
 
         user = get_user_by_email(email)
-        if user and check_password_hash(user["password"], password):
+        if user and check_password_hash(user["password_hash"], password):
             session["user_id"] = user["id"]
             return redirect(url_for("profile"))
 
@@ -102,4 +102,7 @@ def delete_expense(id):
 
 
 if __name__ == "__main__":
+    with app.app_context():
+        init_db()
+        seed_db()
     app.run(debug=True, port=5001)

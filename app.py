@@ -71,7 +71,8 @@ def login():
             session["user_id"] = user["id"]
             return redirect(url_for("profile"))
 
-        return render_template("login.html", error="Invalid email or password")
+        flash("Invalid email or password", "error")
+        return redirect(url_for("login"))
 
     return render_template("login.html")
 
@@ -91,8 +92,11 @@ def privacy():
 # ------------------------------------------------------------------ #
 
 @app.route("/logout")
+@login_required
 def logout():
-    return "Logout — coming in Step 3"
+    session.clear()
+    flash("You have been logged out successfully", "success")
+    return redirect(url_for("login"))
 
 
 @app.route("/profile")

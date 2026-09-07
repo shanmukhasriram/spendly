@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
+import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import create_user, get_user_by_email, init_db, seed_db
 
@@ -31,16 +32,30 @@ def register():
         name = request.form.get("name")
         email = request.form.get("email")
         password = request.form.get("password")
+        confirm_password = request.form.get("confirm_password")
 
-        if not name or not email or not password:
-            return render_template("register.html", error="All fields are required")
+        if not all([name, email, password, confirm_password]):
+            flash("All fields are required", "error")
+            return redirect(url_for("register"))
 
-        hashed_pw = generate_password_hash(password)
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
+            return redirect(url_for("register"))
+
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long", "error")
+            return redirect(url_for("register"))
+
         try:
-            create_user(name, email, hashed_pw)
+            create_user(name, email, password)
+            flash("Account created successfully! Please sign in.", "success")
             return redirect(url_for("login"))
-        except Exception:
-            return render_template("register.html", error="Email already registered")
+        except sqlite3.IntegrityError:
+            flash("Email already registered", "error")
+            return redirect(url_for("register"))
+        except Exception as e:
+            flash(f"An unexpected error occurred: {str(e)}", "error")
+            return redirect(url_for("register"))
 
     return render_template("register.html")
 

@@ -102,7 +102,43 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    return "Profile page — coming in Step 4"
+    # Hardcoded data for Step 04 Design
+    user_data = {
+        "name": "Shanmukha Sriram",
+        "email": "shanmukha@example.com",
+        "member_since": "January 2026",
+        "initials": "SS"
+    }
+
+    stats_data = {
+        "total_spent": "₹12,450.00",
+        "transaction_count": 42,
+        "top_category": "Food"
+    }
+
+    transactions_data = [
+        {"date": "2026-09-10", "description": "Organic Grocery Store", "category": "Food", "amount": "₹1,200.00"},
+        {"date": "2026-09-09", "description": "Monthly Internet Bill", "category": "Bills", "amount": "₹999.00"},
+        {"date": "2026-09-08", "description": "Fuel Refill", "category": "Transport", "amount": "₹2,500.00"},
+        {"date": "2026-09-07", "description": "Movie Ticket", "category": "Entertainment", "amount": "₹450.00"},
+        {"date": "2026-09-06", "description": "Pharmacy Store", "category": "Health", "amount": "₹800.00"},
+    ]
+
+    categories_data = [
+        {"category": "Food", "amount": "₹4,500", "percentage": 36},
+        {"category": "Transport", "amount": "₹3,200", "percentage": 26},
+        {"category": "Bills", "amount": "₹2,100", "percentage": 17},
+        {"category": "Entertainment", "amount": "₹1,250", "percentage": 10},
+        {"category": "Health", "amount": "₹1,400", "percentage": 11},
+    ]
+
+    return render_template(
+        "profile.html",
+        user=user_data,
+        stats=stats_data,
+        transactions=transactions_data,
+        categories=categories_data
+    )
 
 
 @app.route("/expenses/add")

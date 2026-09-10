@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile — Spendly{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+
+    <!-- User Info Card -->
+    <div class="profile-user-card auth-card">
+        <div class="user-info">
+            <div class="user-avatar">{{ user.initials }}</div>
+            <div class="user-details">
+                <h1>{{ user.name }}</h1>
+                <p class="user-email">{{ user.email }}</p>
+                <span class="user-badge">Member since {{ user.member_since }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Stats Row -->
+    <div class="profile-stats-grid">
+        <div class="stat-card feature-card">
+            <span class="stat-label">Total Spent</span>
+            <div class="stat-value">{{ stats.total_spent }}</div>
+        </div>
+        <div class="stat-card feature-card">
+            <span class="stat-label">Transactions</span>
+            <div class="stat-value">{{ stats.transaction_count }}</div>
+        </div>
+        <div class="stat-card feature-card">
+            <span class="stat-label">Top Category</span>
+            <div class="stat-value">
+                <span class="category-pill badge-food">{{ stats.top_category }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="profile-main-grid">
+
+        <!-- Transaction History -->
+        <div class="profile-section section-history">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <a href="#" class="btn-ghost">View All</a>
+            </div>
+            <div class="table-wrapper">
+                <table class="transactions-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th class="text-right">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for tx in transactions %}
+                        <tr>
+                            <td>{{ tx.date }}</td>
+                            <td class="desc">{{ tx.description }}</td>
+                            <td>
+                                <span class="category-badge {{ 'badge-' + tx.category.lower() }}">
+                                    {{ tx.category }}
+                                </span>
+                            </td>
+                            <td class="amount text-right">{{ tx.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Category Breakdown -->
+        <div class="profile-section section-breakdown">
+            <div class="section-header">
+                <h2>Spending Breakdown</h2>
+            </div>
+            <div class="breakdown-list">
+                {% for cat in categories %}
+                <div class="breakdown-item mock-bar-row">
+                    <div class="cat-info">
+                        <span class="cat-name">{{ cat.category }}</span>
+                        <span class="cat-amount">{{ cat.amount }}</span>
+                    </div>
+                    <div class="mock-bar-track">
+                        <div class="mock-bar" style="width: {{ cat.percentage }}%;"></div>
+                    </div>
+                    <div class="cat-percent">{{ cat.percentage }}%</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

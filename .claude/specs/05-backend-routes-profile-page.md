@@ -102,3 +102,4 @@ File: `tests/test_backend_connection.py`
 - [ ] Category breakdown shows 7 categories with percentages that add up to 100 %
 - [ ] All amounts on the page display the ₹ symbol
 - [ ] Registering a brand-new user and visiting `/profile` shows ₹0.00 total spent, 0 transactions, and an empty category breakdown — no errors
+

@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from database.db import create_user, get_user_by_email, init_db, seed_db
+from database import queries
+
 
 from functools import wraps
 
@@ -102,35 +104,50 @@ def logout():
 @app.route("/profile")
 @login_required
 def profile():
-    # Hardcoded data for Step 04 Design
+    user_id = session["user_id"]
+
+    # User Info
+    user_raw = queries.get_user_by_id(user_id)
     user_data = {
-        "name": "Shanmukha Sriram",
-        "email": "shanmukha@example.com",
-        "member_since": "January 2026",
-        "initials": "SS"
+        "name": user_raw["name"],
+        "email": user_raw["email"],
+        "member_since": user_raw["member_since"],
+        "initials": "".join([n[0].upper() for n in user_raw["name"].split()])
     }
 
+    # --- START SUMMARY STATS ---
+    stats_raw = queries.get_summary_stats(user_id)
     stats_data = {
-        "total_spent": "₹12,450.00",
-        "transaction_count": 42,
-        "top_category": "Food"
+        "total_spent": f"₹{stats_raw['total_spent']:,.2f}",
+        "transaction_count": stats_raw["transaction_count"],
+        "top_category": stats_raw["top_category"]
     }
+    # --- END SUMMARY STATS ---
 
+    # --- START TRANSACTIONS ---
+    tx_raw = queries.get_recent_transactions(user_id)
     transactions_data = [
-        {"date": "2026-09-10", "description": "Organic Grocery Store", "category": "Food", "amount": "₹1,200.00"},
-        {"date": "2026-09-09", "description": "Monthly Internet Bill", "category": "Bills", "amount": "₹999.00"},
-        {"date": "2026-09-08", "description": "Fuel Refill", "category": "Transport", "amount": "₹2,500.00"},
-        {"date": "2026-09-07", "description": "Movie Ticket", "category": "Entertainment", "amount": "₹450.00"},
-        {"date": "2026-09-06", "description": "Pharmacy Store", "category": "Health", "amount": "₹800.00"},
+        {
+            "date": tx["date"],
+            "description": tx["description"],
+            "category": tx["category"],
+            "amount": f"₹{tx['amount']:,.2f}"
+        }
+        for tx in tx_raw
     ]
+    # --- END TRANSACTIONS ---
 
+    # --- START CATEGORIES ---
+    cat_raw = queries.get_category_breakdown(user_id)
     categories_data = [
-        {"category": "Food", "amount": "₹4,500", "percentage": 36},
-        {"category": "Transport", "amount": "₹3,200", "percentage": 26},
-        {"category": "Bills", "amount": "₹2,100", "percentage": 17},
-        {"category": "Entertainment", "amount": "₹1,250", "percentage": 10},
-        {"category": "Health", "amount": "₹1,400", "percentage": 11},
+        {
+            "category": cat["category"],
+            "amount": f"₹{cat['amount']:,.2f}",
+            "percentage": cat["percentage"]
+        }
+        for cat in cat_raw
     ]
+    # --- END CATEGORIES ---
 
     return render_template(
         "profile.html",
@@ -141,9 +158,32 @@ def profile():
     )
 
 
-@app.route("/expenses/add")
+@app.route("/expenses/add", methods=["GET", "POST"])
+@login_required
 def add_expense():
-    return "Add expense — coming in Step 7"
+    if request.method == "POST":
+        amount = request.form.get("amount")
+        category = request.form.get("category")
+        description = request.form.get("description")
+        date = request.form.get("date")
+
+        if not all([amount, category, description, date]):
+            flash("All fields are required", "error")
+            return redirect(url_for("add_expense"))
+
+        try:
+            from database.db import add_expense as db_add_expense
+            db_add_expense(session["user_id"], float(amount), category, description, date)
+            flash("Expense added successfully!", "success")
+            return redirect(url_for("profile"))
+        except ValueError:
+            flash("Invalid amount entered", "error")
+            return redirect(url_for("add_expense"))
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", "error")
+            return redirect(url_for("add_expense"))
+
+    return render_template("add_expense.html")
 
 
 @app.route("/expenses/<int:id>/edit")

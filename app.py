@@ -1,9 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import create_user, get_user_by_email, init_db, seed_db
-from database import queries
-
+from database.db import create_user, get_user_by_email, init_db, seed_db, get_user_details, get_summary_stats, get_recent_transactions, get_category_breakdown
+from datetime import datetime, timedelta
 
 from functools import wraps
 
@@ -17,7 +16,6 @@ def login_required(f):
             return redirect(url_for("login"))
         return f(*args, **kwargs)
     return decorated_function
-
 
 # ------------------------------------------------------------------ #
 # Routes                                                              #
@@ -88,7 +86,6 @@ def terms():
 def privacy():
     return render_template("privacy.html")
 
-
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
@@ -106,8 +103,26 @@ def logout():
 def profile():
     user_id = session["user_id"]
 
+    # --- DATE FILTERING LOGIC ---
+    date_from = request.args.get("date_from")
+    date_to = request.args.get("date_to")
+    
+    # Validate dates
+    try:
+        if date_from:
+            datetime.strptime(date_from, "%Y-%m-%d")
+        if date_to:
+            datetime.strptime(date_to, "%Y-%m-%d")
+            
+        if date_from and date_to and date_from > date_to:
+            flash("Start date must be before end date", "error")
+            return redirect(url_for("profile"))
+
+    except ValueError:
+        date_from, date_to = None, None
+
     # User Info
-    user_raw = queries.get_user_by_id(user_id)
+    user_raw = get_user_details(user_id)
     user_data = {
         "name": user_raw["name"],
         "email": user_raw["email"],
@@ -116,7 +131,7 @@ def profile():
     }
 
     # --- START SUMMARY STATS ---
-    stats_raw = queries.get_summary_stats(user_id)
+    stats_raw = get_summary_stats(user_id, date_from, date_to)
     stats_data = {
         "total_spent": f"₹{stats_raw['total_spent']:,.2f}",
         "transaction_count": stats_raw["transaction_count"],
@@ -125,7 +140,7 @@ def profile():
     # --- END SUMMARY STATS ---
 
     # --- START TRANSACTIONS ---
-    tx_raw = queries.get_recent_transactions(user_id)
+    tx_raw = get_recent_transactions(user_id, date_from=date_from, date_to=date_to)
     transactions_data = [
         {
             "date": tx["date"],
@@ -138,7 +153,7 @@ def profile():
     # --- END TRANSACTIONS ---
 
     # --- START CATEGORIES ---
-    cat_raw = queries.get_category_breakdown(user_id)
+    cat_raw = get_category_breakdown(user_id, date_from, date_to)
     categories_data = [
         {
             "category": cat["category"],
@@ -149,14 +164,41 @@ def profile():
     ]
     # --- END CATEGORIES ---
 
+    # --- PRESET CALCULATION ---
+    today = datetime.now().date()
+    
+    # This Month
+    first_of_month = today.replace(day=1)
+    this_month_url = url_for("profile", date_from=first_of_month.strftime("%Y-%m-%d"), date_to=today.strftime("%Y-%m-%d"))
+    
+    # Last 3 Months
+    three_months_ago = today - timedelta(days=90)
+    three_months_url = url_for("profile", date_from=three_months_ago.strftime("%Y-%m-%d"), date_to=today.strftime("%Y-%m-%d"))
+    
+    # Last 6 Months
+    six_months_ago = today - timedelta(days=180)
+    six_months_url = url_for("profile", date_from=six_months_ago.strftime("%Y-%m-%d"), date_to=today.strftime("%Y-%m-%d"))
+    
+    # All Time
+    all_time_url = url_for("profile")
+    
+    presets = [
+        {"label": "This Month", "url": this_month_url, "active": (date_from == first_of_month.strftime("%Y-%m-%d") and date_to == today.strftime("%Y-%m-%d"))},
+        {"label": "Last 3 Months", "url": three_months_url, "active": (date_from == three_months_ago.strftime("%Y-%m-%d") and date_to == today.strftime("%Y-%m-%d"))},
+        {"label": "Last 6 Months", "url": six_months_url, "active": (date_from == six_months_ago.strftime("%Y-%m-%d") and date_to == today.strftime("%Y-%m-%d"))},
+        {"label": "All Time", "url": all_time_url, "active": (not date_from and not date_to)},
+    ]
+
     return render_template(
         "profile.html",
         user=user_data,
         stats=stats_data,
         transactions=transactions_data,
-        categories=categories_data
+        categories=categories_data,
+        presets=presets,
+        date_from=date_from,
+        date_to=date_to
     )
-
 
 @app.route("/expenses/add", methods=["GET", "POST"])
 @login_required

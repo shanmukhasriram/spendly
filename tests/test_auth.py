@@ -1,19 +1,30 @@
 import pytest
 from app import app
+from flask import url_for
 from database.db import init_db, get_db
+import os
 
 @pytest.fixture
 def client():
     app.config['TESTING'] = True
     app.config['SECRET_KEY'] = 'test-key'
+    # Use a separate test database to avoid messing with dev data
+    import database.db
+    original_db_path = database.db.DB_PATH
+    database.db.DB_PATH = "test_auth.db"
+
     with app.test_client() as client:
         with app.app_context():
             init_db()
-            with get_db() as conn:
-                conn.execute("DELETE FROM expenses")
-                conn.execute("DELETE FROM users")
-                conn.commit()
         yield client
+
+    # Cleanup test database and restore original path
+    try:
+        if os.path.exists("test_auth.db"):
+            os.remove("test_auth.db")
+    except PermissionError:
+        pass
+    database.db.DB_PATH = original_db_path
 
 def test_register(client):
     response = client.post('/register', data={
@@ -48,7 +59,7 @@ def test_login(client):
     # Now follow to profile
     response = client.get('/profile', follow_redirects=True)
     assert response.status_code == 200
-    assert b"Profile page" in response.data
+    assert b"My Profile" in response.data
 
 def test_login_invalid(client):
     # Register first

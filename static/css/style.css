@@ -19,6 +19,17 @@
     --border: #e4e1da;
     --border-soft: #eeebe4;
 
+    --cat-food: #c0392b;
+    --cat-food-light: #ffe3e3;
+    --cat-shopping: #1976d2;
+    --cat-shopping-light: #e3f2fd;
+    --cat-transport: #7b1fa2;
+    --cat-transport-light: #f3e5f5;
+    --cat-bills: #388e3c;
+    --cat-bills-light: #e8f5e9;
+    --cat-entertainment: #fbc02d;
+    --cat-entertainment-light: #fffde7;
+
     --font-display: 'DM Serif Display', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
 

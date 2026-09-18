@@ -123,6 +123,11 @@ def profile():
 
     # User Info
     user_raw = get_user_details(user_id)
+    if not user_raw:
+        session.clear()
+        flash("Your session has expired or the account was removed.", "error")
+        return redirect(url_for("login"))
+
     user_data = {
         "name": user_raw["name"],
         "email": user_raw["email"],

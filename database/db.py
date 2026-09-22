@@ -5,6 +5,9 @@ from werkzeug.security import generate_password_hash
 
 DB_PATH = "spendly.db"
 
+# --- Constants ---
+VALID_CATEGORIES = ["Food", "Transport", "Bills", "Health", "Entertainment", "Shopping", "Other"]
+
 def get_db():
     """Returns a SQLite connection with row_factory and foreign keys enabled."""
     conn = sqlite3.connect(DB_PATH)

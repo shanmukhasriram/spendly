@@ -4,6 +4,7 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/add_expense.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -15,31 +16,27 @@
         <form method="POST" action="{{ url_for('add_expense') }}" class="auth-form">
             <div class="form-group">
                 <label for="amount">Amount (₹)</label>
-                <input type="number" step="0.01" name="amount" id="amount" placeholder="0.00" required>
+                <input type="number" step="0.01" min="0.01" name="amount" id="amount" class="form-input" placeholder="0.00" value="{{ amount or '' }}" required>
             </div>
 
             <div class="form-group">
                 <label for="category">Category</label>
-                <select name="category" id="category" required>
-                    <option value="" disabled selected>Select category</option>
-                    <option value="Food">Food</option>
-                    <option value="Transport">Transport</option>
-                    <option value="Bills">Bills</option>
-                    <option value="Entertainment">Entertainment</option>
-                    <option value="Health">Health</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Other">Other</option>
+                <select name="category" id="category" class="form-input" required>
+                    <option value="" disabled {% if not category %}selected{% endif %}>Select category</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="description">Description</label>
-                <input type="text" name="description" id="description" placeholder="e.g. Grocery shopping" required>
+                <input type="text" name="description" id="description" class="form-input" placeholder="e.g. Grocery shopping" maxlength="200" value="{{ description or '' }}">
             </div>
 
             <div class="form-group">
                 <label for="date">Date</label>
-                <input type="date" name="date" id="date" required>
+                <input type="date" name="date" id="date" class="form-input" value="{{ date or '' }}" required>
             </div>
 
             <div class="form-actions">

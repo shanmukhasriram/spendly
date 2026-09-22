@@ -87,8 +87,10 @@ def privacy():
     return render_template("privacy.html")
 
 # ------------------------------------------------------------------ #
-# Placeholder routes — students will implement these                  #
-# ------------------------------------------------------------------ #
+@app.route("/analytics")
+@login_required
+def analytics():
+    return render_template("analytics.html")
 
 @app.route("/logout")
 @login_required

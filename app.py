@@ -1,7 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-from database.db import create_user, get_user_by_email, init_db, seed_db, get_user_details, get_summary_stats, get_recent_transactions, get_category_breakdown
+from database.db import (
+    create_user,
+    get_user_by_email,
+    init_db,
+    seed_db,
+    get_user_details,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown,
+    add_expense as db_add_expense,
+    VALID_CATEGORIES
+)
 from datetime import datetime, timedelta
 
 from functools import wraps
@@ -211,28 +222,60 @@ def profile():
 @login_required
 def add_expense():
     if request.method == "POST":
-        amount = request.form.get("amount")
+        amount_str = request.form.get("amount")
         category = request.form.get("category")
-        description = request.form.get("description")
+        description = request.form.get("description", "").strip()
         date = request.form.get("date")
 
-        if not all([amount, category, description, date]):
-            flash("All fields are required", "error")
-            return redirect(url_for("add_expense"))
+        # Validation
+        errors = []
+
+        # Amount validation
+        try:
+            amount = float(amount_str)
+            if amount <= 0:
+                errors.append("Amount must be greater than 0")
+        except (TypeError, ValueError):
+            errors.append("Amount must be a valid number")
+
+        # Category validation
+        if not category or category not in VALID_CATEGORIES:
+            errors.append("Please select a valid category")
+
+        # Date validation
+        try:
+            if not date:
+                raise ValueError
+            datetime.strptime(date, "%Y-%m-%d")
+        except ValueError:
+            errors.append("Please provide a valid date")
+
+        if errors:
+            for error in errors:
+                flash(error, "error")
+            return render_template("add_expense.html",
+                                    amount=amount_str,
+                                    category=category,
+                                    description=description,
+                                    date=date,
+                                    categories=VALID_CATEGORIES)
 
         try:
-            from database.db import add_expense as db_add_expense
-            db_add_expense(session["user_id"], float(amount), category, description, date)
+            # Store NULL for blank description
+            final_desc = description if description else None
+            db_add_expense(session["user_id"], amount, category, final_desc, date)
             flash("Expense added successfully!", "success")
             return redirect(url_for("profile"))
-        except ValueError:
-            flash("Invalid amount entered", "error")
-            return redirect(url_for("add_expense"))
-        except Exception as e:
-            flash(f"An error occurred: {str(e)}", "error")
-            return redirect(url_for("add_expense"))
+        except sqlite3.Error as e:
+            flash(f"Database error: {str(e)}", "error")
+            return render_template("add_expense.html",
+                                    amount=amount_str,
+                                    category=category,
+                                    description=description,
+                                    date=date,
+                                    categories=VALID_CATEGORIES)
 
-    return render_template("add_expense.html")
+    return render_template("add_expense.html", categories=VALID_CATEGORIES)
 
 
 @app.route("/expenses/<int:id>/edit")

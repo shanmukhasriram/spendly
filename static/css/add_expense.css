@@ -1,0 +1,54 @@
+/* ------------------------------------------------------------------ */
+/* Form Actions (Add Expense)                                              */
+/* ------------------------------------------------------------------ */
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.form-actions .btn-primary {
+    padding: 0.75rem 1.75rem;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.form-actions .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.form-actions .btn-primary:active {
+    transform: translateY(0);
+}
+
+.form-actions .btn-ghost {
+    padding: 0.75rem 1.75rem;
+    font-weight: 500;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+    border: 1px solid var(--border);
+    color: var(--ink-muted);
+}
+
+.form-actions .btn-ghost:hover {
+    background: var(--paper-warm);
+    color: var(--ink);
+    border-color: var(--ink-muted);
+}
+
+.form-actions .btn-ghost:active {
+    background: var(--border-soft);
+}
+
+.form-actions .btn-ghost:focus,
+.form-actions .btn-primary:focus {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+}
